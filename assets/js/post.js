@@ -4,4 +4,10 @@ $(document).ready(function(){
       $(r).find('pre').css('padding', '5px');
     }
   });
+  $('#postContent img').parent('p').css('text-align', 'center');
+
+  $("#postContent img").each(function (index, item) {
+    $(item).wrap(`<a data-fancybox="gallery" href="${$(item).attr("src")}"> </a>`)
+  })
+
 });
