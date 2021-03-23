@@ -20,7 +20,7 @@ comments: true
 
 ![1](/assets/images/post/20210322/3.png)
 
-MNIST 숫자 분류를 새로 만든 프레임 워크를 통해 진행해보았다. Optimizer를 Adam으로 바꾼 덕인지 97%까지 도달할 수 있었다.
+MNIST 숫자 분류를 새로 만든 프레임 워크를 통해 진행해보았다. 은닉층의 뉴런 개수를 128개로 늘렸더니 97%까지 도달할 수 있었다.
 
 Optimizer에 따라 어떤 성능을 보이는 지 알아보기 위해 여러 번 train을 해보고 그래프로 시각화해 보았다. SGD, Momentum, RMSprop, Adam 4개의 Optimize 방식으로, learning rate 를 0.001 에서 1까지 조절해보면서 나타내보았다. (Optimizer마다 momentum, decay_rate 등의 다른 하이퍼 파라미터들이 있긴 하지만 일단 learning rate만 조절했다.)
 
