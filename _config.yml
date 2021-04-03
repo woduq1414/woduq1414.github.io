@@ -21,6 +21,7 @@ url: "https://woduq1414.github.io"
 permalink: /:year/:month/:day/:title
 repository: woduq1414/woduq1414.github.io
 paginate: 5
+timezone: "Asia/Seoul"
 
 # MatJek specific configurations
 github_profile: "https://github.com/woduq1414"
