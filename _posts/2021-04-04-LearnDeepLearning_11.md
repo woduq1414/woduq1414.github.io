@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "프레임워크 없이 딥러닝 구현해보기 11일차"
-date:   2021-04-03 15:12:01 +0900
+date:   2021-04-04 15:12:01 +0900
 categories: 1인_1프로젝트
 tags: 딥러닝 1인1프로젝트
 typora-root-url: ..
