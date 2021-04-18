@@ -1,8 +1,8 @@
 ---
 
 layout: post
-title:  "프레임워크 없이 딥러닝 구현해보기 16일차"
-date:   2021-04-17 12:34:44 +0900
+title:  "프레임워크 없이 딥러닝 구현해보기 17일차"
+date:   2021-04-18 17:25:18 +0900
 categories: 1인_1프로젝트
 tags: 딥러닝 1인1프로젝트
 typora-root-url: ..
@@ -13,86 +13,83 @@ comments: true
 
 
 
-### 어제 한 것
+### 오늘의 배운 것
 
-어제 모델을 아래와 같이 짜고 야자 끝날 때 즈음에 훈련을 돌리고 기숙사로 들어갔다.
+GPU는 빠르다.
 
-```python
-net = MultiLayerNet(is_use_dropout=False)
-net.add_layer(Layer.Conv2D(32, (3, 3), pad=1, input_size=(1, 64, 64)), initializer=Initializer.He())
-net.add_layer(Layer.BatchNormalization())
-net.add_layer(Layer.Relu())
-net.add_layer(Layer.Pooling(pool_h=2, pool_w=2, stride=2))
-net.add_layer(Layer.Conv2D(64, (3, 3), pad=1, initializer=Initializer.He()))
-net.add_layer(Layer.BatchNormalization())
-net.add_layer(Layer.Relu())
-net.add_layer(Layer.Pooling(pool_h=2, pool_w=2, stride=2))
-net.add_layer(Layer.Conv2D(128, (3, 3), pad=1, initializer=Initializer.He()))
-net.add_layer(Layer.BatchNormalization())
-net.add_layer(Layer.Relu())
-net.add_layer(Layer.Pooling(pool_h=2, pool_w=2, stride=2))
-net.add_layer(Layer.Dense(50, initializer=Initializer.He(), activation=Layer.Relu()))
-net.add_layer(Layer.Dropout(0.5))
-net.add_layer(Layer.Dense(2))
-net.add_layer(Layer.Dropout(0.5))
-net.add_layer(Layer.SoftmaxWithLoss())
-
-result = net.train(
-    x_train, t_train, x_test, t_test, batch_size=64, iters_num=6250, print_epoch=1, evaluate_limit=100,
-    is_use_progress_bar=True, save_model_each_epoch=1, save_model_path="./dog_cat_result",
-    optimizer=Optimizer.Adam(lr=0.001))
-```
-
-오전 6시 즈음에 20epoch 학습이 끝났었다.
-
-test 정확도는 0.85까지 올랐는데, learning rate 0.001이 커서인지는 모르겠는데 loss와 정확도가 진동하는 모습을 보였다.. 다음번 학습에는 learning rate를 줄여봐야겠다.
-
-![2](/assets/images/post/20210417/1.png)
-
-![2](/assets/images/post/20210417/2.png)
-
-근데 BatchNormalization 계층의 이동평균, 표준편차가 저장이 안 된 오류가 있어서 실제 이미지에 테스트는 못해보았다..ㅠㅠ 나중에 다시 돌려봐야겠다. 
-
-
+[관련 링크](https://light-tree.tistory.com/25)
 
 
 
 ### 해본 것
 
-사실 개 고양이 분류는 목표가 아니고, 중간고사 전까지 연예인 얼굴 분류기를 만들어 보는 것이 목표이다.
+오늘은 아이돌 사진 분류를 훈련시키려고 했는데, 너무 학습이 느린 느낌이 들었다. 그래서 cupy라는 라이브러리를 이용해 행렬계산 시 gpu를 사용할 수 있게 하였다.
 
-대상은 [아이유, 아이린, 아린],'아'자 돌림 여자 아이돌들로 정하였다.
+똑같은 모델을 위는 cpu로, 아래는 gpu로 학습시키는 과정인데, gpu로 학습할 때 거의 cpu보다 7배는 빠르게 학습할 수 있었다.  (cpu : i7-8550U, gpu : Geforce GTX 1050)
 
-아이돌 사진을 가장 쉽고 빠르게 구할 수 있는 방법은 구글 크롤링일 것 같아서 google_images_download라는 라이브러리를 사용하였다.
+![2](/assets/images/post/20210418/6.png)
+
+![2](/assets/images/post/20210418/5.png)
+
+그런데 gpu로 학습을 시키려고 보니까 gpu 메모리가 모자라서 도중에 학습이 멈추는 경우가 생겼고, 배치 사이즈를 줄이고 사진 크기를 줄여서 학습을 해봐도 갑자기 에러가 뜨고 멈춰버렸다.
+
+그래서 대안으로 google colab을 이용해 학습시키기로 하였다.
+
+colab에서는 노트북 gpu보다 훨씬 좋은 gpu를 지원하기 때문에 노트북에서 하는 것보다 5배는 빠르게 학습이 되었다. 
+
+
+
+아래는 학습에 사용한 모델이다.
 
 ```python
-from google_images_download import google_images_download
-
-response = google_images_download.googleimagesdownload()
-
-name = "아린,아린 직캠,아린 콘서트,오마이걸 아린 비밀정원,오마이걸 아린 돌핀"
-
-arguments = {"keywords": f"{name}", "limit": 100, "print_urls": True, "format": "jpg", "output_directory" : "./downloads/arin/",
-             "chromedriver": "C:\\Users\\User\\google-image-crawler\\chromedriver.exe"}  # creating list of arguments
-paths = response.download(arguments)
-print(paths)
+def make_net1():
+    net = MultiLayerNet(is_use_dropout=False)
+    net.add_layer(Layer.Conv2D(16, (3, 3), pad=1, input_size=(1, 128, 128)), initializer=Initializer.He())
+    net.add_layer(Layer.BatchNormalization())
+    net.add_layer(Layer.Relu())
+    net.add_layer(Layer.Pooling(pool_h=2, pool_w=2, stride=2))
+    net.add_layer(Layer.Conv2D(32, (3, 3), pad=1, initializer=Initializer.He()))
+    net.add_layer(Layer.BatchNormalization())
+    net.add_layer(Layer.Relu())
+    net.add_layer(Layer.Pooling(pool_h=2, pool_w=2, stride=2))
+    net.add_layer(Layer.Conv2D(64, (3, 3), pad=1, initializer=Initializer.He()))
+    net.add_layer(Layer.BatchNormalization())
+    net.add_layer(Layer.Relu())
+    net.add_layer(Layer.Pooling(pool_h=2, pool_w=2, stride=2))
+    net.add_layer(Layer.Conv2D(128, (3, 3), pad=1, initializer=Initializer.He()))
+    net.add_layer(Layer.BatchNormalization())
+    net.add_layer(Layer.Relu())
+    net.add_layer(Layer.Pooling(pool_h=2, pool_w=2, stride=2))
+    net.add_layer(Layer.Dense(128, initializer=Initializer.He(), activation=Layer.Relu()))
+    net.add_layer(Layer.Dropout(0.5))
+    net.add_layer(Layer.Dense(3))
+    net.add_layer(Layer.Dropout(0.5))
+    net.add_layer(Layer.SoftmaxWithLoss())
+    return net
 ```
 
-위와 같이 한 아이돌에 대해 여러 키워드로 검색해 크롤링하여 각 아이돌별로 1300장 정도를 가져왔다.
-
-![2](/assets/images/post/20210417/3.png)
-
-
-
-face_recognition 라이브러리를 통해 얼굴만 추출해서 이미지로 저장하였고(뭔가 스토커라도 된 것 같았다..), ImageDupeless라는 소프트웨어로 중복 이미지를 삭제하였다. 
-
-![2](/assets/images/post/20210417/4.png)
+```python
+result = net.train(
+    x_train, t_train, x_test, t_test, batch_size=64, iters_num=12000, print_epoch=1, evaluate_limit=500,
+    is_use_progress_bar=True, save_model_each_epoch=1, save_model_path="./idol_result",
+    optimizer=Optimizer.Adam(lr=0.0003))
+```
 
 
 
-그리고 이전 개 고양이 분류와 같이 Image Augmentation을 진행하여 train 이미지를 10배로 불렸고, 흑백처리 후 numpy array로 바꿔 npz 파일에 저장하였다.
+예상했던 것보다는 잘 안 나왔지만, test 정확도를 80% 까지에 수렴시키는데에 성공했다. Image Augmentation을 더 강하게 하거나, 하이퍼파라미터를 수정해봐야할 것 같다. 90% 까지 안착하는 것이 목표가 될 것 같다.
+
+![2](/assets/images/post/20210418/2.png)
+
+![2](/assets/images/post/20210418/3.png)
 
 
+
+이는 사진과 인공지능이 예측한 라벨인데, 첫 번째 줄은 아이유, 두 번째 줄은 아이린, 세 번째 줄은 아린이다. 여기서는 24개 중 2개를 제대로 예측하지 못하였다.
+
+![2](/assets/images/post/20210418/4.png)
+
+근데 데이터셋의 사진들을 보니까 인터넷에서 가져온 거라보니 몇몇 사진이 해당 아이돌이 아닌 다른 사람이 들어가 있는 것을 발견하였다. 언젠가 수작업으로 골라내야할 것 같다. 
 
 
 
