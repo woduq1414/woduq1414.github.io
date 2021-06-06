@@ -8,7 +8,7 @@ typora-root-url: ..
 comments: true
 ---
 
-
+유튜브 실시간 급상승 동영상 데이터셋을 분석해보았습니다.
 
 ### 개요
 
