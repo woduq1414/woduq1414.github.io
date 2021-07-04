@@ -49,7 +49,7 @@ comments: true
 
 
 
-[https://idol.multiflex.tk/multi](https://idol.multiflex.tk/multi) 에서 직접 해볼 수 있다!
+[https://idol.upstack.tech/multi](https://idol.upstack.tech/multi) 에서 직접 해볼 수 있다!
 
 ------
 

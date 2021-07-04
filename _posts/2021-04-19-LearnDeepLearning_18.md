@@ -33,7 +33,7 @@ comments: true
 
 
 
- [https://idol.multiflex.tk/upload](https://idol.multiflex.tk/upload)
+ [https://idol.upstack.tech/upload](https://idol.upstack.tech/upload)
 
 위 링크에서 직접 해볼 수 있다!
 
