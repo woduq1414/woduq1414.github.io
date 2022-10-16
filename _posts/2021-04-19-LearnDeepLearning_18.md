@@ -33,12 +33,9 @@ comments: true
 
 
 
- [https://idol.upstack.tech/upload](https://idol.upstack.tech/upload)
+ [http://idool.kro.kr/upload](http://idool.kro.kr/upload)
 
 위 링크에서 직접 해볼 수 있다!
-
-([https://github.com/YunYeongChang](https://github.com/YunYeongChang)님 서버^^)
-
 
 
 
