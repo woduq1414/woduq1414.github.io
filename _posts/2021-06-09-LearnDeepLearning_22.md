@@ -49,7 +49,7 @@ comments: true
 
 
 
-[https://idol.upstack.tech/multi](https://idol.upstack.tech/multi) 에서 직접 해볼 수 있다!
+[http://idool.kro.kr/upload](http://idool.kro.kr/upload) 에서 직접 해볼 수 있다!
 
 ------
 
